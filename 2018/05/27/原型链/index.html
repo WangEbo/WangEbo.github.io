@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html class="full-height">
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="//cdn.bootcss.com/bulma/0.4.1/css/bulma.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  
+  <title>原型链 | 王毅博的blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="先看看原型 你必须知道的概念：无论何时，只要创建了一个新函数，就会根据一组特定的规则 为该函数创建一个prototype属性，这个属性即指向函数的原型对象，并且默认情况下，这个原型对象会自动获得一个constructor属性，这个属性指向这个新函数，因此我们可以通过（如下图Person函数，）Person.prototype来添加属性或方法，而在通过Person创建一个新实例后，实例上有一个[[">
+<meta name="keywords" content="js,原型,原型链">
+<meta property="og:type" content="article">
+<meta property="og:title" content="原型链">
+<meta property="og:url" content="http://yoursite.com/2018/05/27/原型链/index.html">
+<meta property="og:site_name" content="王毅博的blog">
+<meta property="og:description" content="先看看原型 你必须知道的概念：无论何时，只要创建了一个新函数，就会根据一组特定的规则 为该函数创建一个prototype属性，这个属性即指向函数的原型对象，并且默认情况下，这个原型对象会自动获得一个constructor属性，这个属性指向这个新函数，因此我们可以通过（如下图Person函数，）Person.prototype来添加属性或方法，而在通过Person创建一个新实例后，实例上有一个[[">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://yoursite.com/2018/05/27/原型链/proto.png">
+<meta property="og:updated_time" content="2018-05-26T17:05:06.039Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="原型链">
+<meta name="twitter:description" content="先看看原型 你必须知道的概念：无论何时，只要创建了一个新函数，就会根据一组特定的规则 为该函数创建一个prototype属性，这个属性即指向函数的原型对象，并且默认情况下，这个原型对象会自动获得一个constructor属性，这个属性指向这个新函数，因此我们可以通过（如下图Person函数，）Person.prototype来添加属性或方法，而在通过Person创建一个新实例后，实例上有一个[[">
+<meta name="twitter:image" content="http://yoursite.com/2018/05/27/原型链/proto.png">
+  
+    <link rel="alternate" href="/atom.xml" title="王毅博的blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/css/nav.css">
+<link rel="stylesheet" href="/css/layout.css">
+  
+
+</head>
+
+<body>
+  <header id="navbar" class="overflow-hidden">
+  <div class="container">
+    <nav class="nav">
+         <div class="nav-left">
+            <a href="/" class="nav-item" style="font-size: 20px;">
+              <span class="logo">王毅博</span>'s Blog
+            </a>
+         </div>
+        <div class="nav-center is-hidden position-relative" id="search_container">
+            <div class="nav-item full-width full-height">
+                <i class="fa fa-search has-padding" aria-hidden="true"></i>
+                <input type="text" id="search_input" class="search-input full-height full-width" placeholder="Search post" autofocus>
+                <i id="close_search" class="fa fa-times" aria-hidden="true"></i>
+            </div>
+            <div id="search_result"></div>
+        </div>
+        <div class="nav-right nav-menu">
+            <a class="nav-item" id="search">
+                <i class="fa fa-search" aria-hidden="true"></i>
+            </a>
+            
+            <a class="nav-item" href="/">
+                Home
+            </a>
+            
+            <a class="nav-item" href="/works">
+                My Works
+            </a>
+            
+            <a class="nav-item" href="/about">
+                About
+            </a>
+            
+        </div>
+        <span class="nav-toggle" id="navMenuDropdown">
+            <span></span>
+            <span></span>
+            <span></span>
+        </span>
+        <div class="navbar-menu position-absolute full-width content-box is-hidden-desktop is-flex flex-column center" style="top: 100%;">
+            
+            <a class="nav-item flex-1" href="/">
+                Home
+            </a>
+            
+            <a class="nav-item flex-1" href="/works">
+                My Works
+            </a>
+            
+            <a class="nav-item flex-1" href="/about">
+                About
+            </a>
+            
+        </div>
+    </nav>
+  </div>
+</header>
+
+  <div id="main-wrap" class="position-relative" style="margin-top: 55px;">
+      <div class="main-inner-content">
+          <!--博文页面-->
+
+<style>
+    .header-box {
+        height: 370px;
+        filter: blur(10px);
+        background-size: cover;
+        background-color: lightsteelblue;
+    }
+
+    .post-box {
+        padding: 15px;
+        padding-top: 60px;
+        min-height: 80vh;
+        margin-top: -200px;
+        border-radius: 4px;
+        background-color: rgba(255,255,255,.8);
+    }
+
+    .post-avatar {
+        height: 30px;
+        width: 30px;
+        border-radius: 50%;
+    }
+
+    .flow-chart {
+        text-align: center;
+    }
+
+    img[alt="post-cover"] {
+        display: none;
+    }
+</style>
+<header>
+    <div id="header_box" class="header-box"></div>
+</header>
+<section>
+    <div class="container post-box">
+        <div class="content post-title is-flex center flex-column" style="margin-bottom: 70px; overflow: auto;">
+            <h1 class="has-text-centered" style="padding-bottom: 10px; border-bottom: 3px solid #fff">
+                <strong>原型链</strong>
+            </h1>
+            
+            <div class="is-flex align-center">
+                <img class="post-avatar" src="http://ww1.sinaimg.cn/bmiddle/844499d6gw1etaw7i7ahcj20bt0b2gm2.jpg">
+                <span style="padding:0 10px;"> <span class="sub-title">By</span> 王毅博</span>
+                <span class="post-date sub-title">at: 2018-05-27</span>
+            </div>
+            
+                <div>
+                    
+                         <a class="tag is-post-tag" href="/tags/js/">js</a>
+                    
+                         <a class="tag is-post-tag" href="/tags/原型/">原型</a>
+                    
+                         <a class="tag is-post-tag" href="/tags/原型链/">原型链</a>
+                    
+                </div>
+            
+        </div>
+        <div class="content" style="overflow: auto">
+            <ul>
+<li><p>先看看原型</p>
+<p>你必须知道的概念：无论何时，只要创建了一个新函数，就会根据一组特定的规则 <strong>为该函数创建一个prototype属性</strong>，这个属性即指向函数的原型对象，并且默认情况下，这个原型对象会自动获得一个constructor属性，这个属性指向这个新函数，因此我们可以通过（如下图Person函数，）Person.prototype来添加属性或方法，而在通过Person创建一个新实例后，实例上有一个[[prototype]]指针指向原型对象，在chrome、Safari、FireFox中可以通过<code>__proto__</code>来访问</p>
+</li>
+</ul>
+<p><img src="./proto.png" alt="原型图"></p>
+<ul>
+<li><p>原型的一些特点</p>
+<ul>
+<li>实例对象可以访问到原型对象中的静态成员（ <strong>person1.constructor同样也是访问的原型对象中的</strong>）</li>
+<li>实例对象中添加的属性如果与原型对象相同，那么则会屏蔽原型对象中的改属性，实例对象单独添加该属性，对原型对象无影响</li>
+<li>由于第一条特点的原因，我们有时候需要通过hasOwnProperty来判断实例对象中是否真正含有某一属性</li>
+<li>当然为了便捷，ECMAscript5就提供了hasPrototypeProperty方法用来检测实例对象要访问的某属性是否只存在于原型对象而不存在于其自身，语法<code>hasPrototypeProperty(obj,&#39;attr_name&#39;)</code>，返回一个bool值</li>
+<li>for-in只能遍历可枚举的属性</li>
+</ul>
+</li>
+<li><p><strong>原型的动态性</strong>（又一隐藏的重要特点，栈与堆将非常有助于理解这一特点）</p>
+<ol>
+<li><p>由于实力对象查找原型对象中的属性是一次搜索，因此，我们可以动态的为原型对象添加属性或方法，而后再通过实例对象来访问，如</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">var p1=new Person()</span><br><span class="line">Person.prototype.sayHi=function()&#123;</span><br><span class="line">  alert(&apos;hi&apos;)</span><br><span class="line">&#125;</span><br><span class="line">friend,sayHi()	//	&apos;hi&apos; (没有任何问题)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>请谨记，实例对象与构造器之间，是没有任何指针的，它是通过原型对象中的constructor属性来访问构造器的，因此，如果我们完全通过<code>Person.prototype</code>完全重写”我们将需要的原型对象”，那么就相当于，我们 <strong>切断了最初原型对象与构造器之间的唯一关系</strong>，这是因为，通过Person.prototype={}（一个新的对象字面量）的形式，使得构造器Person的prototype属性的指针发生了改变，指向了我们新开辟内存创建的新对象“{}”</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">function Person()&#123;&#125;</span><br><span class="line">var p1=new Person()</span><br><span class="line">Person.prototype=&#123;</span><br><span class="line">	constructor:Person	//如果需要通过constructor来判断类型，我们需要手动添加这个属性来打到预期</span><br><span class="line">	name:&apos;Nicolas&apos;</span><br><span class="line">&#125;</span><br><span class="line">console.log(friend.name)	//error ,由于这是 = 赋值操作符，改变了Person.prototype的指针，指向了内存中的</span><br><span class="line">&#123;</span><br><span class="line">	constructor:Person</span><br><span class="line">	name:&apos;Nicolas&apos;</span><br><span class="line">&#125;</span><br><span class="line">这个对象，而p1的[[prototype]]属性是在`var p1=new Person()`这一步操作之后产生的原型对象，而此时的原型对象不包含name属性，因此报错</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>原生对象的原型</p>
+<p>原生对象Array、String、object等都是采用原型模式创建的，因此可以随时给他们添加新方法</p>
+</li>
+</ol>
+</li>
+</ul>
+
+        </div>
+        <div class="post-reply">
+            
+                <!-- 来必力City版安装代码 -->
+                <div id="lv-container" data-id="city" data-uid="MTAyMC8yOTE4Ni81NzUz">
+                    <script type="text/javascript">
+                        (function(d, s) {
+                            var j, e = d.getElementsByTagName(s)[0];
+
+                            if (typeof LivereTower === 'function') { return; }
+
+                            j = d.createElement(s);
+                            j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+                            j.async = true;
+
+                            e.parentNode.insertBefore(j, e);
+                        })(document, 'script');
+                    </script>
+                    <noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+                </div>
+                <!-- City版安装代码已完成 -->
+            
+            
+        </div>
+    </div>
+</section>
+<script>
+    // 获取第一张图, 用以当封面背景图
+    var img = document.querySelectorAll('img')[1]
+
+    if (img) {
+        var header_box = document.querySelector('#header_box')
+        header_box.style.backgroundImage = 'url('+ img.src +')'
+    }
+</script>
+      </div>
+  </div>
+  <style>
+  #footer {
+    min-height: 10vh;
+    background: black;
+    color: #fff;
+  }
+
+  #footer a {
+    color: #e1e1e1;
+  }
+</style>
+<footer id="footer" class="has-text-centered is-flex center">
+  <div class="container has-padding">
+    <div>
+      <div>
+        <!--请您保留作者署名, 主题制作来之不易-->
+        Theme by <a href="http://haojen.github.io/">Haojen Ma</a>
+        <br>
+        Copyright © 王毅博 2018
+        <br>
+        Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="/js/search_core.js"></script>
+<script src="/js/script.js"></script>
+
+</body>
+</html>
