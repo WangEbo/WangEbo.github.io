@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html class="full-height">
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="//cdn.bootcss.com/bulma/0.4.1/css/bulma.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  
+  <title>html篇 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="图片与文字组合使用时，如何使图片与文字垂直居中？ 给图片设置vertical-algin:center;并给文字以及其父元素高度相同的行高  什么是bfc？ Block Format Context(块级格式化上下文)，它是一个独立渲染区域，只有Block-level box参与，它规定了内部的Block-level box布局规则，并与这个区域外部毫不相干  inline-block中的空格部分">
+<meta property="og:type" content="article">
+<meta property="og:title" content="html篇">
+<meta property="og:url" content="http://yoursite.com/2018/05/26/html篇/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="图片与文字组合使用时，如何使图片与文字垂直居中？ 给图片设置vertical-algin:center;并给文字以及其父元素高度相同的行高  什么是bfc？ Block Format Context(块级格式化上下文)，它是一个独立渲染区域，只有Block-level box参与，它规定了内部的Block-level box布局规则，并与这个区域外部毫不相干  inline-block中的空格部分">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-05-26T14:55:36.878Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="html篇">
+<meta name="twitter:description" content="图片与文字组合使用时，如何使图片与文字垂直居中？ 给图片设置vertical-algin:center;并给文字以及其父元素高度相同的行高  什么是bfc？ Block Format Context(块级格式化上下文)，它是一个独立渲染区域，只有Block-level box参与，它规定了内部的Block-level box布局规则，并与这个区域外部毫不相干  inline-block中的空格部分">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/css/nav.css">
+<link rel="stylesheet" href="/css/layout.css">
+  
+
+</head>
+
+<body>
+  <header id="navbar" class="overflow-hidden">
+  <div class="container">
+    <nav class="nav">
+         <div class="nav-left">
+            <a href="/" class="nav-item" style="font-size: 20px;">
+              <span class="logo">Diskobólos</span>'s Blog
+            </a>
+         </div>
+        <div class="nav-center is-hidden position-relative" id="search_container">
+            <div class="nav-item full-width full-height">
+                <i class="fa fa-search has-padding" aria-hidden="true"></i>
+                <input type="text" id="search_input" class="search-input full-height full-width" placeholder="Search post" autofocus>
+                <i id="close_search" class="fa fa-times" aria-hidden="true"></i>
+            </div>
+            <div id="search_result"></div>
+        </div>
+        <div class="nav-right nav-menu">
+            <a class="nav-item" id="search">
+                <i class="fa fa-search" aria-hidden="true"></i>
+            </a>
+            
+            <a class="nav-item" href="/">
+                Home
+            </a>
+            
+            <a class="nav-item" href="/works">
+                My Works
+            </a>
+            
+            <a class="nav-item" href="/about">
+                About
+            </a>
+            
+        </div>
+        <span class="nav-toggle" id="navMenuDropdown">
+            <span></span>
+            <span></span>
+            <span></span>
+        </span>
+        <div class="navbar-menu position-absolute full-width content-box is-hidden-desktop is-flex flex-column center" style="top: 100%;">
+            
+            <a class="nav-item flex-1" href="/">
+                Home
+            </a>
+            
+            <a class="nav-item flex-1" href="/works">
+                My Works
+            </a>
+            
+            <a class="nav-item flex-1" href="/about">
+                About
+            </a>
+            
+        </div>
+    </nav>
+  </div>
+</header>
+
+  <div id="main-wrap" class="position-relative" style="margin-top: 55px;">
+      <div class="main-inner-content">
+          <!--博文页面-->
+
+<style>
+    .header-box {
+        height: 370px;
+        filter: blur(10px);
+        background-size: cover;
+        background-color: lightsteelblue;
+    }
+
+    .post-box {
+        padding: 15px;
+        padding-top: 60px;
+        min-height: 80vh;
+        margin-top: -200px;
+        border-radius: 4px;
+        background-color: rgba(255,255,255,.8);
+    }
+
+    .post-avatar {
+        height: 30px;
+        width: 30px;
+        border-radius: 50%;
+    }
+
+    .flow-chart {
+        text-align: center;
+    }
+
+    img[alt="post-cover"] {
+        display: none;
+    }
+</style>
+<header>
+    <div id="header_box" class="header-box"></div>
+</header>
+<section>
+    <div class="container post-box">
+        <div class="content post-title is-flex center flex-column" style="margin-bottom: 70px; overflow: auto;">
+            <h1 class="has-text-centered" style="padding-bottom: 10px; border-bottom: 3px solid #fff">
+                <strong>html篇</strong>
+            </h1>
+            
+            <div class="is-flex align-center">
+                <img class="post-avatar" src="https://cdn2.iconfinder.com/data/icons/rcons-user/32/male-shadow-circle-512.png">
+                <span style="padding:0 10px;"> <span class="sub-title">By</span> Diskobólos</span>
+                <span class="post-date sub-title">at: 2018-05-26</span>
+            </div>
+            
+                <div>
+                    
+                </div>
+            
+        </div>
+        <div class="content" style="overflow: auto">
+            <h4 id="图片与文字组合使用时，如何使图片与文字垂直居中？"><a href="#图片与文字组合使用时，如何使图片与文字垂直居中？" class="headerlink" title="图片与文字组合使用时，如何使图片与文字垂直居中？"></a>图片与文字组合使用时，如何使图片与文字垂直居中？</h4><ul>
+<li>给图片设置vertical-algin:center;并给文字以及其父元素高度相同的行高</li>
+</ul>
+<h4 id="什么是bfc？"><a href="#什么是bfc？" class="headerlink" title="什么是bfc？"></a>什么是bfc？</h4><ul>
+<li>Block Format Context(块级格式化上下文)，它是一个独立渲染区域，只有Block-level box参与，它规定了内部的Block-level box布局规则，并与这个区域外部毫不相干</li>
+</ul>
+<h4 id="inline-block中的空格部分是什么？"><a href="#inline-block中的空格部分是什么？" class="headerlink" title="inline-block中的空格部分是什么？"></a>inline-block中的空格部分是什么？</h4><p>其实是html中的空白字符；li标签不闭合可以解决中间有间距，浏览器会自动补齐闭合li标签；或者给li添加负的边距；</p>
+<pre><code>给父元素font-size：0；也可以清除其中的空白
+</code></pre><h4 id="h5新特性"><a href="#h5新特性" class="headerlink" title="h5新特性"></a>h5新特性</h4><ul>
+<li>h5缓存sessionstorage/localstorage/cookie</li>
+</ul>
+
+        </div>
+        <div class="post-reply">
+            
+                <!-- 来必力City版安装代码 -->
+                <div id="lv-container" data-id="city" data-uid="MTAyMC8yOTE4Ni81NzUz">
+                    <script type="text/javascript">
+                        (function(d, s) {
+                            var j, e = d.getElementsByTagName(s)[0];
+
+                            if (typeof LivereTower === 'function') { return; }
+
+                            j = d.createElement(s);
+                            j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+                            j.async = true;
+
+                            e.parentNode.insertBefore(j, e);
+                        })(document, 'script');
+                    </script>
+                    <noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+                </div>
+                <!-- City版安装代码已完成 -->
+            
+            
+        </div>
+    </div>
+</section>
+<script>
+    // 获取第一张图, 用以当封面背景图
+    var img = document.querySelectorAll('img')[1]
+
+    if (img) {
+        var header_box = document.querySelector('#header_box')
+        header_box.style.backgroundImage = 'url('+ img.src +')'
+    }
+</script>
+      </div>
+  </div>
+  <style>
+  #footer {
+    min-height: 10vh;
+    background: black;
+    color: #fff;
+  }
+
+  #footer a {
+    color: #e1e1e1;
+  }
+</style>
+<footer id="footer" class="has-text-centered is-flex center">
+  <div class="container has-padding">
+    <div>
+      <div>
+        <!--请您保留作者署名, 主题制作来之不易-->
+        Theme by <a href="http://haojen.github.io/">Haojen Ma</a>
+        <br>
+        Copyright © John Doe 2018
+        <br>
+        Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="/js/search_core.js"></script>
+<script src="/js/script.js"></script>
+
+</body>
+</html>
