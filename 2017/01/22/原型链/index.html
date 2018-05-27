@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.3.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.3.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.3.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.3.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="先看原型你必须知道的概念：无论何时，只要创建了一个新函数，就会根据一组特定的规则 为该函数创建一个prototype属性，这个属性即指向函数的原型对象，并且默认情况下，这个原型对象会自动获得一个constructor属性，这个属性指向这个新函数，因此我们可以通过（如下图Person函数，）Person.prototype来添加属性或方法，而在通过Person创建一个新实例后，实例上有一个[[pro">
+<meta name="keywords" content="js,原型,原型链">
+<meta property="og:type" content="article">
+<meta property="og:title" content="原型链">
+<meta property="og:url" content="http://yoursite.com/2017/01/22/原型链/index.html">
+<meta property="og:site_name" content="王毅博的blog">
+<meta property="og:description" content="先看原型你必须知道的概念：无论何时，只要创建了一个新函数，就会根据一组特定的规则 为该函数创建一个prototype属性，这个属性即指向函数的原型对象，并且默认情况下，这个原型对象会自动获得一个constructor属性，这个属性指向这个新函数，因此我们可以通过（如下图Person函数，）Person.prototype来添加属性或方法，而在通过Person创建一个新实例后，实例上有一个[[pro">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/uploads/proto.png">
+<meta property="og:updated_time" content="2018-05-27T05:17:57.738Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="原型链">
+<meta name="twitter:description" content="先看原型你必须知道的概念：无论何时，只要创建了一个新函数，就会根据一组特定的规则 为该函数创建一个prototype属性，这个属性即指向函数的原型对象，并且默认情况下，这个原型对象会自动获得一个constructor属性，这个属性指向这个新函数，因此我们可以通过（如下图Person函数，）Person.prototype来添加属性或方法，而在通过Person创建一个新实例后，实例上有一个[[pro">
+<meta name="twitter:image" content="http://yoursite.com/uploads/proto.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/01/22/原型链/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>原型链 | 王毅博的blog</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">王毅博的blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">源于热爱</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-search">
+    <a href="/search" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-search"></i> <br />搜索</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/01/22/原型链/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="王毅博">
+      <meta itemprop="description" content="认知与成长">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="王毅博的blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">原型链
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2017-01-22 00:43:54" itemprop="dateCreated datePublished" datetime="2017-01-22T00:43:54+08:00">2017-01-22</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-05-27 13:17:57" itemprop="dateModified" datetime="2018-05-27T13:17:57+08:00">2018-05-27</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="先看原型"><a href="#先看原型" class="headerlink" title="先看原型"></a>先看原型</h4><p>你必须知道的概念：无论何时，只要创建了一个新函数，就会根据一组特定的规则 <strong>为该函数创建一个prototype属性</strong>，这个属性即指向函数的原型对象，并且默认情况下，这个原型对象会自动获得一个constructor属性，这个属性指向这个新函数，因此我们可以通过（如下图Person函数，）Person.prototype来添加属性或方法，而在通过Person创建一个新实例后，实例上有一个[[prototype]]指针指向原型对象，在chrome、Safari、FireFox中可以通过<code>__proto__</code>来访问</p>
+<p><img src="/uploads/proto.png" alt="原型图"></p>
+<h4 id="原型的一些特点"><a href="#原型的一些特点" class="headerlink" title="原型的一些特点"></a>原型的一些特点</h4><ul>
+<li>实例对象可以访问到原型对象中的静态成员（ <strong>person1.constructor同样也是访问的原型对象中的</strong>）</li>
+<li>实例对象中添加的属性如果与原型对象相同，那么则会屏蔽原型对象中的改属性，实例对象单独添加该属性，对原型对象无影响</li>
+<li>由于第一条特点的原因，我们有时候需要通过hasOwnProperty来判断实例对象中是否真正含有某一属性</li>
+<li>当然为了便捷，ECMAscript5就提供了hasPrototypeProperty方法用来检测实例对象要访问的某属性是否只存在于原型对象而不存在于其自身，语法<code>hasPrototypeProperty(obj,&#39;attr_name&#39;)</code>，返回一个bool值</li>
+<li>for-in只能遍历可枚举的属性</li>
+</ul>
+<h4 id="原型的动态性（重要特点，栈与堆将非常有助于理解这一特点）"><a href="#原型的动态性（重要特点，栈与堆将非常有助于理解这一特点）" class="headerlink" title="原型的动态性（重要特点，栈与堆将非常有助于理解这一特点）"></a><strong>原型的动态性</strong>（重要特点，栈与堆将非常有助于理解这一特点）</h4><ol>
+<li><p>由于实力对象查找原型对象中的属性是一次搜索，因此，我们可以动态的为原型对象添加属性或方法，而后再通过实例对象来访问，如</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">var p1=new Person()</span><br><span class="line">Person.prototype.sayHi=function()&#123;</span><br><span class="line">  alert(&apos;hi&apos;)</span><br><span class="line">&#125;</span><br><span class="line">friend,sayHi()	//	&apos;hi&apos; (没有任何问题)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>请谨记，实例对象与构造器之间，是没有任何指针的，它是通过原型对象中的constructor属性来访问构造器的，因此，如果我们完全通过<code>Person.prototype</code>完全重写”我们将需要的原型对象”，那么就相当于，我们 <strong>切断了最初原型对象与构造器之间的唯一关系</strong>，这是因为，通过Person.prototype={}（一个新的对象字面量）的形式，使得构造器Person的prototype属性的指针发生了改变，指向了我们新开辟内存创建的新对象“{}”</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">function Person()&#123;&#125;</span><br><span class="line">var p1=new Person()</span><br><span class="line">Person.prototype=&#123;</span><br><span class="line">	constructor:Person	//如果需要通过constructor来判断类型，我们需要手动添加这个属性来打到预期</span><br><span class="line">	name:&apos;Nicolas&apos;</span><br><span class="line">&#125;</span><br><span class="line">console.log(friend.name)	//error ,由于这是 = 赋值操作符，改变了Person.prototype的指针，指向了内存中的</span><br><span class="line">&#123;</span><br><span class="line">	constructor:Person</span><br><span class="line">	name:&apos;Nicolas&apos;</span><br><span class="line">&#125;</span><br><span class="line">这个对象，而p1的[[prototype]]属性是在`var p1=new Person()`这一步操作之后产生的原型对象，而此时的原型对象不包含name属性，因此报错</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="原生对象的原型"><a href="#原生对象的原型" class="headerlink" title="原生对象的原型"></a>原生对象的原型</h4><ul>
+<li>原生对象Array、String、object等都是采用原型模式创建的，因此可以随时给他们添加新方法</li>
+</ul>
+<h4 id="原型链"><a href="#原型链" class="headerlink" title="原型链"></a>原型链</h4>
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/js/" rel="tag"># js</a>
+          
+            <a href="/tags/原型/" rel="tag"># 原型</a>
+          
+            <a href="/tags/原型链/" rel="tag"># 原型链</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/23/html/" rel="next" title="html">
+                <i class="fa fa-chevron-left"></i> html
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/11/递归与深拷贝/" rel="prev" title="递归与深拷贝">
+                递归与深拷贝 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/uploads/avatar.jpg"
+                alt="王毅博" />
+            
+              <p class="site-author-name" itemprop="name">王毅博</p>
+              <p class="site-description motion-element" itemprop="description">认知与成长</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">21</span>
+                    <span class="site-state-item-name">标签</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#先看原型"><span class="nav-number">1.</span> <span class="nav-text">先看原型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#原型的一些特点"><span class="nav-number">2.</span> <span class="nav-text">原型的一些特点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#原型的动态性（重要特点，栈与堆将非常有助于理解这一特点）"><span class="nav-number">3.</span> <span class="nav-text">原型的动态性（重要特点，栈与堆将非常有助于理解这一特点）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#原生对象的原型"><span class="nav-number">4.</span> <span class="nav-text">原生对象的原型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#原型链"><span class="nav-number">5.</span> <span class="nav-text">原型链</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">王毅博</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动 v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Pisces</a> v6.3.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.3.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.3.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.3.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.3.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.3.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
